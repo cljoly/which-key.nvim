@@ -248,6 +248,10 @@ M.mappings = {}
 M.duplicates = {}
 
 function M.map(mode, prefix, cmd, buf, opts)
+  if prefix == "é" then
+      vim.api.nvim_echo({{"map"}, {prefix}}, true, {})
+  end
+
   local other = vim.api.nvim_buf_call(buf, function()
     local ret = vim.fn.maparg(prefix, mode, false, true)
     ---@diagnostic disable-next-line: undefined-field
@@ -525,7 +529,13 @@ function M.update_keymaps(mode, buf)
   local keymaps = buf and vim.api.nvim_buf_get_keymap(buf, mode) or vim.api.nvim_get_keymap(mode)
   local tree = M.get_tree(mode, buf).tree
   for _, keymap in pairs(keymaps) do
+    if keymap.lhs == "èè" then
+      vim.api.nvim_echo({{"key: "}, {keymap.lhs} }, true, {})
+    end
     local skip = M.is_hook(keymap.lhs, keymap.rhs)
+    if keymap.lhs == "èè" then
+      vim.api.nvim_echo({{"key: "}, {keymap.lhs}, {", skip: "}, {tostring(skip)} }, true, {})
+    end
 
     if not skip and Util.t(keymap.rhs) == "" then
       skip = true
@@ -548,6 +558,9 @@ function M.update_keymaps(mode, buf)
     end
 
     if not skip then
+    if keymap.lhs == "èè" then
+      vim.api.nvim_echo({{"key: "}, {keymap.lhs}, {", notskip: "}, {tostring(skip)} }, true, {})
+    end
       local mapping = {
         id = Util.t(keymap.lhs),
         prefix = keymap.lhs,
@@ -557,6 +570,9 @@ function M.update_keymaps(mode, buf)
       -- don't include Plug keymaps
       if mapping.keys.nvim[1]:lower() ~= "<plug>" then
         tree:add(mapping)
+    if keymap.lhs == "èè" then
+      vim.api.nvim_echo({{"key: "}, {keymap.lhs}, {", added"}}, true, {})
+    end
       end
     end
   end

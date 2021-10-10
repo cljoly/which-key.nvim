@@ -26,6 +26,10 @@ end
 
 ---@return KeyCodes
 function M.parse_keys(keystr)
+    if keystr == "èè" then
+      vim.api.nvim_echo({{"parse_keys "}}, true, {})
+    end
+
   local keys = {}
   local special = nil
   for i = 1, #keystr, 1 do
@@ -38,6 +42,9 @@ function M.parse_keys(keystr)
     elseif special then
       special = special .. c
     else
+    if keystr == "èè" then
+      vim.api.nvim_echo({{"normal insert"}}, true, {})
+    end
       table.insert(keys, c)
     end
   end
